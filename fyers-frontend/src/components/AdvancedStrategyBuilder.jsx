@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './AdvancedStrategyBuilder.css';
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+
 const AdvancedStrategyBuilder = () => {
   const [symbol, setSymbol] = useState('NSE:SBIN-EQ');
   const [interval, setInterval] = useState('5');
@@ -19,7 +21,7 @@ const AdvancedStrategyBuilder = () => {
 
   const fetchAvailableStrategies = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/advanced-strategies/available-strategies');
+      const response = await fetch(`${BASE_URL}/api/advanced-strategies/available-strategies`);
       const data = await response.json();
       setAvailableStrategies(data.strategies);
     } catch (error) {
@@ -30,7 +32,7 @@ const AdvancedStrategyBuilder = () => {
   const generateSignals = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/advanced-strategies/generate-signals', {
+      const response = await fetch(`${BASE_URL}/api/advanced-strategies/generate-signals`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +64,7 @@ const AdvancedStrategyBuilder = () => {
   const runBacktest = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/advanced-strategies/backtest', {
+      const response = await fetch(`${BASE_URL}/api/advanced-strategies/backtest`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

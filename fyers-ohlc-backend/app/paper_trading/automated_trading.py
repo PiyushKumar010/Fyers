@@ -744,6 +744,10 @@ class AutomatedTradingEngine:
                 print(f"[PROGRESS] {progress}% ({processed}/{total_timestamps}) - Portfolio: Rs.{self.engine.portfolio.portfolio_value:,.2f}")
                 last_progress = progress
             
+            # Yield control to event loop every 10 candles to prevent blocking HTTP requests
+            if processed % 10 == 0:
+                await asyncio.sleep(0)
+            
             current_date = datetime.fromtimestamp(ts).date()
             
             # Get current prices for all symbols at this timestamp

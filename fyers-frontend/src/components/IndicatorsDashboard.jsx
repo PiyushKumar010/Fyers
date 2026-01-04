@@ -3,6 +3,8 @@ import { MdInsights } from 'react-icons/md';
 import { ALL_SYMBOLS, normalizeSymbol } from '../constants/stocks';
 import './IndicatorsDashboard.css';
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+
 const IndicatorsDashboard = () => {
   const [symbol, setSymbol] = useState('NSE:SBIN-EQ');
   const [customSymbol, setCustomSymbol] = useState('');
@@ -19,7 +21,7 @@ const IndicatorsDashboard = () => {
 
   const fetchAvailableIndicators = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/advanced-strategies/available-indicators');
+      const response = await fetch(`${BASE_URL}/api/advanced-strategies/available-indicators`);
       const data = await response.json();
       setAvailableIndicators(data.indicators);
     } catch (error) {
@@ -37,7 +39,7 @@ const IndicatorsDashboard = () => {
     
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/advanced-strategies/calculate-indicators', {
+      const response = await fetch(`${BASE_URL}/api/advanced-strategies/calculate-indicators`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
