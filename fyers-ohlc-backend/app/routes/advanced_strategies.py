@@ -410,6 +410,7 @@ async def get_available_indicators():
             {"name": "supertrend", "description": "Supertrend - trend-following indicator"},
             {"name": "bollinger", "description": "Bollinger Bands - volatility indicator"},
             {"name": "adx", "description": "Average Directional Index - trend strength"},
-            {"name": "atr", "description": "Average True Range - volatility measurement"}
+            {"name": "atr", "description": "Average True Range - volatility measurement"},
+            {"name": "renko", "description": "Renko Chart - price movement-based trend detection"}
         ]
     }

@@ -23,6 +23,8 @@ const ALL_STRATEGIES = [
   { value: "SUPERTREND", label: "Supertrend", description: "ATR-based trend detection" },
   { value: "BOLLINGER", label: "Bollinger Bands", description: "Volatility-based signals" },
   { value: "ADX", label: "ADX", description: "Trend strength indicator" },
+  { value: "ATR", label: "ATR", description: "Average True Range - volatility measurement" },
+  { value: "RENKO", label: "Renko", description: "Price movement-based trend detection" },
 ];
 
 export default function AutomatedTrading() {
