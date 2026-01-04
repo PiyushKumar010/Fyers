@@ -83,6 +83,7 @@
    FYERS_REDIRECT_URI=https://your-app-name.onrender.com/auth/callback
    MONGO_URI=<your_mongodb_connection_string_from_step_1>
    DB_NAME=fyers_ohlc
+   ALLOWED_ORIGINS=https://your-frontend-app.vercel.app
    REFRESH_BUFFER_SECONDS=60
    REFRESH_CHECK_INTERVAL=300
    DISABLE_TOKEN_REFRESHER=false
@@ -94,6 +95,7 @@
    - Replace `<your_fyers_client_id>` with your actual Fyers client ID
    - Replace `<your_fyers_secret_key>` with your actual Fyers secret key
    - Replace `your-app-name` in the redirect URI with your actual Render app name
+   - Replace `your-frontend-app.vercel.app` with your actual Vercel URL (add this AFTER deploying frontend)
    - Use the MongoDB connection string from Part 1
 
 5. **Select Free Plan**
@@ -109,8 +111,11 @@
    - Once deployed, copy the URL (e.g., `https://your-app-name.onrender.com`)
    - You'll need this for the frontend
 
-8. **Update CORS in Backend** (if needed later)
-   - After deploying frontend, add your frontend URL to the CORS origins in `app/main.py`
+8. **Update CORS in Backend**
+   - After deploying frontend to Vercel, go back to Render
+   - Add/Update the `ALLOWED_ORIGINS` environment variable with your Vercel URL
+   - Example: `ALLOWED_ORIGINS=https://your-app.vercel.app`
+   - Backend will auto-redeploy with the new CORS settings
 
 ---
 
