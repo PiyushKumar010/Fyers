@@ -1,0 +1,139 @@
+/* Auth Button Component - Professional Design */
+.auth-button-container {
+  position: fixed;
+  top: calc(var(--navbar-height) + 1rem);
+  right: 1.5rem;
+  z-index: 999;
+  max-width: 450px;
+  animation: slideInRight 0.4s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.auth-status {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-accent);
+  border-radius: 4px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.auth-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.auth-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.auth-icon.success {
+  color: var(--success);
+}
+
+.auth-icon.warning {
+  color: var(--warning);
+}
+
+.auth-title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.01em;
+}
+
+.auth-message {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.auth-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.auth-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+}
+
+.auth-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .auth-button-container {
+    right: 1.5rem;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-button-container {
+    position: relative;
+    top: 0;
+    right: 0;
+    max-width: 100%;
+    margin: 1rem 0;
+  }
+
+  .auth-status {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+  }
+
+  .auth-info {
+    margin-bottom: 0.75rem;
+  }
+
+  .auth-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .auth-title {
+    font-size: 0.875rem;
+  }
+
+  .auth-message {
+    font-size: 0.8rem;
+  }
+}

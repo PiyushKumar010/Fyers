@@ -1,0 +1,58 @@
+.strategies-page {
+  width: 100%;
+  max-width: 100%;
+  min-height: calc(100vh - var(--navbar-height));
+  overflow-x: hidden;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-header h1 {
+  margin: 0 0 12px 0;
+  font-size: 2.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.page-header h1 svg {
+  min-width: 32px;
+  min-height: 32px;
+  stroke: var(--accent-primary);
+  filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+  -webkit-text-fill-color: initial;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+@media (max-width: 1024px) {
+  .strategies-page {
+    padding: 90px 1.5rem 1.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .strategies-page {
+    padding: 80px 1rem 1rem 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+  }
+}
+
+

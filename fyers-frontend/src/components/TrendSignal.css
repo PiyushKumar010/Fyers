@@ -1,0 +1,15 @@
+.trend-signal{border:1px solid var(--card-border,#e6e6e6);padding:12px;border-radius: 4px;background:var(--card-bg,#fff);margin-top:18px}
+.trend-signal h3{margin:0 0 12px 0;font-size:16px;font-weight:700;color:#1a1d29;letter-spacing:0.3px}
+.ts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.ts-card{padding:10px;background:linear-gradient(180deg,#ffffff,#fbfbfb);border-radius: 4px;border:1px solid rgba(0,0,0,0.04);text-align:center}
+.ts-card-title{font-size:12px;color:#1a1d29;font-weight:600;margin-bottom:6px}
+.ts-card-value{font-size:18px;font-weight:700;color:#1a1d29}
+.badge{display:inline-block;padding:6px 10px;border-radius: 4px;color:#fff}
+.badge.up{background:linear-gradient(90deg,#16a34a,#34d399)}
+.badge.down{background:linear-gradient(90deg,#dc2626,#fb7185)}
+.badge.neutral{background:#6b7280}
+.moment.over{color:#b91c1c;font-weight:700}
+.moment.under{color:#065f46;font-weight:700}
+.moment.neutral{color:#374151}
+.ts-loading{color:#1a1d29;font-weight:600}
+.ts-error{color:#b91c1c;font-weight:600}

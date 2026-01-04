@@ -1,0 +1,83 @@
+.market-status {
+  background: white;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  overflow: visible;
+}
+
+.market-status.open {
+  border-left: 5px solid #059669;
+}
+
+.market-status.closed {
+  border-left: 5px solid #dc2626;
+}
+
+.market-status.loading {
+  border-left: 5px solid #f59e0b;
+}
+
+.market-status {
+  color: #1a1d29;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.status-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.market-status.open .status-dot {
+  background-color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.market-status.closed .status-dot {
+  background-color: #ef4444;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.status-text {
+  color: #1a1d29;
+  font-size: 1.1em;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.status-message {
+  color: #64748b;
+  font-size: 0.95em;
+  margin-top: 10px;
+  font-style: italic;
+  font-weight: 500;
+  text-align: center;
+  max-width: 600px;
+}
+
