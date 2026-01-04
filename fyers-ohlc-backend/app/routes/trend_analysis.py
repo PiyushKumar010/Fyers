@@ -39,13 +39,15 @@ async def analyze_trend(
         result = analyzer.analyze_market(symbol, interval, duration)
         
         if 'error' in result:
-            raise HTTPException(status_code=400, detail=result['error'])
+            raise HTTPException(status_code=404, detail=result['error'])
             
         return {
             "status": "success",
             "data": convert_to_serializable(result)
         }
         
+    except HTTPException as exc:
+        raise exc
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -97,6 +99,8 @@ async def get_stochastic_oscillator(
             "data": convert_to_serializable(result)
         }
         
+    except HTTPException as exc:
+        raise exc
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -143,5 +147,7 @@ async def get_trend_history(
             "data": convert_to_serializable(trends)
         }
         
+    except HTTPException as exc:
+        raise exc
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -17,6 +17,13 @@ app = FastAPI(
 )
 
 # CORS configuration
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Get allowed origins from environment variable or use defaults
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "").split(",")
 origins = [
     "http://localhost:5173",  # React dev server (Vite default)
     "http://127.0.0.1:5173",
@@ -24,7 +31,7 @@ origins = [
     "http://127.0.0.1:5174",
     "http://localhost:3000",  # Alternative React dev server
     "http://127.0.0.1:3000",
-]
+] + [origin.strip() for origin in ALLOWED_ORIGINS if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,

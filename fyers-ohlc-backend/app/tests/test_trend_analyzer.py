@@ -1,4 +1,4 @@
-""
+"""
 Test script for TrendAnalyzer class
 """
 import os

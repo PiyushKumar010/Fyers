@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { MdTrendingUp, MdShowChart, MdArrowUpward, MdArrowDownward, MdCancel, MdCheckCircle } from "react-icons/md";
-import { getOhlc, getLoginUrl, getAuthStatus, getMarketStatus, getQuotes } from "../api/fyersApi";
+import { getOhlc, getLoginUrl, getAuthStatus, getMarketStatus, getQuotes, getQuote } from "../api/fyersApi";
 import CandlestickChart from "./CandlestickChart";
 import MarketStatus from "./MarketStatus";
 import TrendSignal from "./TrendSignal";
@@ -101,17 +101,24 @@ export default function OhlcDashboard() {
 
   const fetchIndices = async () => {
     try {
-      const indices = ['NSE:NIFTY50-INDEX', 'NSE:NIFTYBANK-INDEX', 'BSE:SENSEX-INDEX'];
-      const response = await getQuotes(indices);
-      
-      if (response?.quotes) {
-        const indexNames = ['Nifty 50', 'Nifty Bank', 'Sensex'];
-        const enrichedIndices = response.quotes.map((quote, idx) => ({
-          ...quote,
-          displayName: indexNames[idx]
-        }));
-        setIndicesData(enrichedIndices);
-      }
+      const indices = [
+        { symbol: 'NSE:NIFTY50-INDEX', displayName: 'Nifty 50' },
+        { symbol: 'NSE:NIFTYBANK-INDEX', displayName: 'Nifty Bank' },
+        { symbol: 'BSE:SENSEX-INDEX', displayName: 'Sensex' },
+      ];
+
+      // Fetch individually so one bad symbol doesn’t break all
+      const results = await Promise.all(indices.map(async (idx) => {
+        try {
+          const quote = await getQuote(idx.symbol);
+          return { ...quote, displayName: idx.displayName };
+        } catch (err) {
+          console.warn(`Index fetch failed for ${idx.symbol}:`, err?.message || err);
+          return null;
+        }
+      }));
+
+      setIndicesData(results.filter(Boolean));
     } catch (err) {
       console.error('Failed to fetch indices:', err);
     }

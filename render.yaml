@@ -1,0 +1,36 @@
+# render.yaml
+# This file is optional but makes Render deployment easier
+# Place this in your repository root
+
+services:
+  - type: web
+    name: fyers-backend
+    runtime: python
+    rootDir: fyers-ohlc-backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: FYERS_CLIENT_ID
+        sync: false  # Set manually in Render dashboard
+      - key: FYERS_SECRET_KEY
+        sync: false  # Set manually in Render dashboard
+      - key: FYERS_REDIRECT_URI
+        value: https://fyers-backend.onrender.com/auth/callback
+      - key: MONGO_URI
+        sync: false  # Set manually in Render dashboard
+      - key: DB_NAME
+        value: fyers_ohlc
+      - key: ALLOWED_ORIGINS
+        sync: false  # Set manually with your Vercel URL
+      - key: REFRESH_BUFFER_SECONDS
+        value: 60
+      - key: REFRESH_CHECK_INTERVAL
+        value: 300
+      - key: DISABLE_TOKEN_REFRESHER
+        value: false
+      - key: DISABLE_LIVE_DATA_STORAGE
+        value: true
+      - key: LIVE_DATA_THRESHOLD_DAYS
+        value: 1
+    healthCheckPath: /health

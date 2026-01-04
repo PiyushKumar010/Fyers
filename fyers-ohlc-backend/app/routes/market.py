@@ -32,10 +32,13 @@ def get_ltp(symbol: str = Query(..., description="Stock symbol, e.g. NSE:RELIANC
         }
         
         response = fyers.quotes(data)
-        
+
         if response.get("s") != "ok":
             error_msg = response.get("message", "Unknown error")
-            raise HTTPException(status_code=400, detail=f"Fyers API error: {error_msg}")
+            error_code = response.get("code")
+            print(f"[MARKET][LTP] Fyers error for {symbol}: {response}")
+            status_code = 429 if error_code == 429 else 400
+            raise HTTPException(status_code=status_code, detail=f"Fyers API error [{error_code}]: {error_msg}")
         
         d = response.get("d", [])
         if not d:
@@ -72,10 +75,13 @@ def get_quote(symbol: str = Query(..., description="Stock symbol, e.g. NSE:RELIA
         }
         
         response = fyers.quotes(data)
-        
+
         if response.get("s") != "ok":
             error_msg = response.get("message", "Unknown error")
-            raise HTTPException(status_code=400, detail=f"Fyers API error: {error_msg}")
+            error_code = response.get("code")
+            print(f"[MARKET][QUOTE] Fyers error for {symbol}: {response}")
+            status_code = 429 if error_code == 429 else 400
+            raise HTTPException(status_code=status_code, detail=f"Fyers API error [{error_code}]: {error_msg}")
         
         d = response.get("d", [])
         if not d:
@@ -116,10 +122,13 @@ def get_quotes(symbols: str = Query(..., description="Comma-separated symbols, e
         }
         
         response = fyers.quotes(data)
-        
+
         if response.get("s") != "ok":
             error_msg = response.get("message", "Unknown error")
-            raise HTTPException(status_code=400, detail=f"Fyers API error: {error_msg}")
+            error_code = response.get("code")
+            print(f"[MARKET][QUOTES] Fyers error for {symbols}: {response}")
+            status_code = 429 if error_code == 429 else 400
+            raise HTTPException(status_code=status_code, detail=f"Fyers API error [{error_code}]: {error_msg}")
         
         d = response.get("d", [])
         quotes = []

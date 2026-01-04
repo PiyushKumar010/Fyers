@@ -1,0 +1,41 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "frontend-build",
+			"type": "shell",
+			"command": "cd /d c:\\coding\\Projects\\fyers-ohlc\\fyers-frontend && npm run build",
+			"problemMatcher": []
+		},
+		{
+			"label": "frontend-build",
+			"type": "shell",
+			"command": "cd /d c:\\coding\\Projects\\fyers-ohlc\\fyers-frontend; npm run build",
+			"problemMatcher": []
+		},
+		{
+			"label": "frontend-build",
+			"type": "shell",
+			"command": "npm run build --prefix c:\\coding\\Projects\\fyers-ohlc\\fyers-frontend",
+			"problemMatcher": []
+		},
+		{
+			"label": "frontend-build-prefix",
+			"type": "shell",
+			"command": "npm run build --prefix c:\\coding\\Projects\\fyers-ohlc\\fyers-frontend",
+			"problemMatcher": []
+		},
+		{
+			"label": "backend-compile",
+			"type": "shell",
+			"command": "C:/coding/Projects/fyers-ohlc/.venv/Scripts/python.exe -m compileall c:/coding/Projects/fyers-ohlc/fyers-ohlc-backend/app",
+			"problemMatcher": []
+		},
+		{
+			"label": "backend-compile",
+			"type": "shell",
+			"command": "C:/coding/Projects/fyers-ohlc/.venv/Scripts/python.exe -m compileall c:/coding/Projects/fyers-ohlc/fyers-ohlc-backend/app",
+			"problemMatcher": []
+		}
+	]
+}

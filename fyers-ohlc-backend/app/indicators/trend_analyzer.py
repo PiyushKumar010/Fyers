@@ -12,6 +12,7 @@ import pandas as pd
 import pytz
 
 from app.services import fyers as fyers_service
+from app.utils.market_utils import adjust_date_for_market
 
 
 class TrendAnalyzer:
@@ -28,13 +29,20 @@ class TrendAnalyzer:
         if duration <= 0:
             raise ValueError("duration must be a positive integer")
 
-        # calculate range
-        range_from = (datetime.now().date() - timedelta(days=duration)).strftime("%Y-%m-%d")
-        range_to = datetime.now().date().strftime("%Y-%m-%d")
+        # calculate range and adjust for non-trading days
+        range_to_raw = datetime.now().date().strftime("%Y-%m-%d")
+        range_to = adjust_date_for_market(range_to_raw)
+        range_from = (datetime.strptime(range_to, "%Y-%m-%d").date() - timedelta(days=duration)).strftime("%Y-%m-%d")
 
         # normalize symbol and fetch raw candles
         symbol_norm = fyers_service.normalize_symbol(symbol)
-        raw = fyers_service.fetch_ohlc(symbol_norm, interval, range_from, range_to)
+        try:
+            raw = fyers_service.fetch_ohlc(symbol_norm, interval, range_from, range_to)
+        except Exception as exc:
+            message = str(exc)
+            if "no_data" in message.lower():
+                return pd.DataFrame(columns=["datetime", "open", "high", "low", "close", "volume"])
+            raise
 
         if not raw:
             return pd.DataFrame(columns=["datetime", "open", "high", "low", "close", "volume"])
@@ -49,7 +57,10 @@ class TrendAnalyzer:
             df["datetime"] = pd.to_datetime(df["timestamp"], unit="s")
             df.drop(columns=["timestamp"], inplace=True)
 
-        df["datetime"] = df["datetime"].dt.tz_localize(self.ist)
+        if df["datetime"].dt.tz is None:
+            df["datetime"] = df["datetime"].dt.tz_localize(self.ist)
+        else:
+            df["datetime"] = df["datetime"].dt.tz_convert(self.ist)
 
         # ensure numeric types and consistent column names
         df = df.rename(columns={
