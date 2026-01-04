@@ -5,6 +5,7 @@ from app.config import settings
 from app import database
 from datetime import datetime
 from app.services import fyers as fyers_service
+import os
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -77,7 +78,11 @@ def fyers_callback(
     Exchanges authorization code for access token and stores it in MongoDB.
     Redirects to frontend with success/error status.
     """
-    frontend_url = "http://localhost:5173"  # Default Vite dev server URL
+    # Get frontend URL from environment or ALLOWED_ORIGINS, fallback to localhost
+    frontend_url = os.getenv("FRONTEND_URL")
+    if not frontend_url:
+        allowed_origins = os.getenv("ALLOWED_ORIGINS", "")
+        frontend_url = allowed_origins.split(",")[0].strip() if allowed_origins else "http://localhost:5173"
     
     # Use whichever code parameter was provided
     actual_code = auth_code or code
