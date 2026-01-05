@@ -1,8 +1,11 @@
 from fyers_apiv3 import fyersModel
 from app import database
 from app.config import settings
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from typing import Optional
+
+# IST timezone (UTC+5:30)
+IST = timezone(timedelta(hours=5, minutes=30))
 
 
 def normalize_symbol(symbol: str) -> str:
@@ -154,7 +157,7 @@ def get_latest_candle(symbol: str, resolution: str):
         return None
 
     return {
-        "time": datetime.fromtimestamp(c[0]).strftime("%Y-%m-%d %H:%M"),
+        "time": datetime.fromtimestamp(c[0], tz=timezone.utc).astimezone(IST).strftime("%Y-%m-%d %H:%M"),
         "open": float(c[1]),
         "high": float(c[2]),
         "low": float(c[3]),
@@ -217,7 +220,7 @@ def fetch_ohlc(symbol: str, resolution: str, from_date: str, to_date: str):
         
         try:
             formatted.append({
-                "time": datetime.fromtimestamp(c[0]).strftime("%Y-%m-%d %H:%M"),
+                "time": datetime.fromtimestamp(c[0], tz=timezone.utc).astimezone(IST).strftime("%Y-%m-%d %H:%M"),
                 "open": float(c[1]),
                 "high": float(c[2]),
                 "low": float(c[3]),
