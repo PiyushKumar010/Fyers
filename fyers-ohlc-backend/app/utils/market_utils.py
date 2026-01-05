@@ -74,6 +74,11 @@ def is_market_open(date: datetime = None) -> Tuple[bool, str]:
     if is_holiday(date):
         return False, "Market Holiday"
     
+    # If checking a date with time at midnight (00:00:00), it's a date-only check
+    # In this case, we only care if it's a valid trading day, not the time
+    if date.hour == 0 and date.minute == 0 and date.second == 0:
+        return True, "Trading Day"
+    
     # Check market hours (9:15 AM to 3:30 PM IST)
     hour = date.hour
     minute = date.minute
