@@ -44,7 +44,7 @@ def is_holiday(date: datetime) -> bool:
 
 def is_market_open(date: datetime = None) -> Tuple[bool, str]:
     """
-    Check if the market is open on a given date.
+    Check if the market is open on a given date and time.
     
     Args:
         date: datetime object (defaults to today)
@@ -65,9 +65,18 @@ def is_market_open(date: datetime = None) -> Tuple[bool, str]:
         return False, "Market Holiday"
     
     # Check market hours (9:15 AM to 3:30 PM IST)
-    # For simplicity, we'll just check if it's a trading day
-    # You can add time-based checks here if needed
+    hour = date.hour
+    minute = date.minute
     
+    # Before market opens (before 9:15 AM)
+    if hour < 9 or (hour == 9 and minute < 15):
+        return False, "Market Not Yet Open"
+    
+    # After market closes (after 3:30 PM)
+    if hour > 15 or (hour == 15 and minute > 30):
+        return False, "Market Closed for the Day"
+    
+    # Market is open
     return True, "Market Open"
 
 
