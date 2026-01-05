@@ -21,6 +21,8 @@ from app.indicators.macd import calculate_macd
 from app.indicators.supertrend import calculate_supertrend
 from app.indicators.bollinger import calculate_bollinger_bands
 from app.indicators.adx import calculate_adx
+from app.indicators.atr import calculate_atr
+from app.indicators.renko import calculate_renko, get_renko_signal
 
 
 class TradingMode(Enum):
@@ -47,7 +49,7 @@ class AutoTradingConfig:
     def __post_init__(self):
         if self.strategies is None:
             # Default strategies to run
-            self.strategies = ["RSI", "MACD", "SUPERTREND", "BOLLINGER", "ADX"]
+            self.strategies = ["RSI", "MACD", "SUPERTREND", "BOLLINGER", "ADX", "ATR", "RENKO"]
 
 
 class StrategySignal:
@@ -341,6 +343,139 @@ class AutomatedTradingEngine:
         
         return None
     
+    def run_atr_strategy(self, symbol: str, df: pd.DataFrame) -> Optional[StrategySignal]:
+        """Run ATR-based volatility breakout strategy"""
+        try:
+            if df is None or len(df) < 20:
+                return None
+            
+            atr_values = calculate_atr(df, period=14)
+            
+            if len(atr_values) < 2 or pd.isna(atr_values.iloc[-1]):
+                return None
+            
+            current_atr = atr_values.iloc[-1]
+            prev_atr = atr_values.iloc[-2]
+            current_price = df['close'].iloc[-1]
+            prev_close = df['close'].iloc[-2]
+            timestamp = datetime.fromtimestamp(df['timestamp'].iloc[-1])
+            
+            # Calculate 20-period SMA for trend
+            sma_20 = df['close'].rolling(window=20).mean().iloc[-1]
+            
+            # ATR breakout strategy: High volatility + price breakout
+            # BUY: Price breaks above SMA + ATR expanding + upward price movement
+            if current_atr > prev_atr * 1.2:  # ATR expanding by 20%
+                price_change = (current_price - prev_close) / prev_close
+                
+                if current_price > sma_20 and price_change > 0.01:  # 1% upward move
+                    confidence = min(1.0, abs(price_change) * 10)  # Higher moves = higher confidence
+                    return StrategySignal(
+                        strategy_name="ATR",
+                        symbol=symbol,
+                        signal="BUY",
+                        price=current_price,
+                        timestamp=timestamp,
+                        confidence=confidence,
+                        metadata={
+                            "atr": current_atr,
+                            "atr_change": (current_atr - prev_atr) / prev_atr * 100,
+                            "price_change": price_change * 100
+                        }
+                    )
+                
+                # SELL: Price breaks below SMA + ATR expanding + downward price movement
+                elif current_price < sma_20 and price_change < -0.01:  # 1% downward move
+                    confidence = min(1.0, abs(price_change) * 10)
+                    return StrategySignal(
+                        strategy_name="ATR",
+                        symbol=symbol,
+                        signal="SELL",
+                        price=current_price,
+                        timestamp=timestamp,
+                        confidence=confidence,
+                        metadata={
+                            "atr": current_atr,
+                            "atr_change": (current_atr - prev_atr) / prev_atr * 100,
+                            "price_change": price_change * 100
+                        }
+                    )
+                
+        except Exception as e:
+            print(f"ATR strategy error for {symbol}: {e}")
+        
+        return None
+    
+    def run_renko_strategy(self, symbol: str, df: pd.DataFrame) -> Optional[StrategySignal]:
+        """Run RENKO chart-based trend strategy"""
+        try:
+            if df is None or len(df) < 20:
+                return None
+            
+            # Calculate Renko bricks
+            renko_df = calculate_renko(df, brick_size=None, atr_period=14, atr_multiplier=1.0)
+            
+            if renko_df is None or len(renko_df) < 3:
+                return None
+            
+            # Get signal from Renko
+            renko_signal = get_renko_signal(renko_df, lookback=3)
+            
+            current_price = df['close'].iloc[-1]
+            timestamp = datetime.fromtimestamp(df['timestamp'].iloc[-1])
+            
+            # Get trend strength from consecutive bricks
+            recent_bricks = renko_df.tail(5)
+            consecutive_up = 0
+            consecutive_down = 0
+            
+            for trend in recent_bricks['trend'].values:
+                if trend == 1:
+                    consecutive_up += 1
+                    consecutive_down = 0
+                elif trend == -1:
+                    consecutive_down += 1
+                    consecutive_up = 0
+            
+            # BUY signal: Bullish Renko trend
+            if renko_signal == 'BULLISH' and consecutive_up >= 2:
+                confidence = min(1.0, consecutive_up / 5.0)  # More consecutive bricks = higher confidence
+                return StrategySignal(
+                    strategy_name="RENKO",
+                    symbol=symbol,
+                    signal="BUY",
+                    price=current_price,
+                    timestamp=timestamp,
+                    confidence=confidence,
+                    metadata={
+                        "renko_signal": renko_signal,
+                        "consecutive_up_bricks": consecutive_up,
+                        "total_bricks": len(renko_df)
+                    }
+                )
+            
+            # SELL signal: Bearish Renko trend
+            elif renko_signal == 'BEARISH' and consecutive_down >= 2:
+                confidence = min(1.0, consecutive_down / 5.0)
+                return StrategySignal(
+                    strategy_name="RENKO",
+                    symbol=symbol,
+                    signal="SELL",
+                    price=current_price,
+                    timestamp=timestamp,
+                    confidence=confidence,
+                    metadata={
+                        "renko_signal": renko_signal,
+                        "consecutive_down_bricks": consecutive_down,
+                        "total_bricks": len(renko_df)
+                    }
+                )
+                
+        except Exception as e:
+            print(f"RENKO strategy error for {symbol}: {e}")
+        
+        return None
+    
     def aggregate_signals(self, signals: List[StrategySignal]) -> Optional[StrategySignal]:
         """
         Aggregate signals from multiple strategies to make final decision.
@@ -615,6 +750,10 @@ class AutomatedTradingEngine:
                 signal = self.run_bollinger_strategy(symbol, df)
             elif strategy_name == "ADX":
                 signal = self.run_adx_strategy(symbol, df)
+            elif strategy_name == "ATR":
+                signal = self.run_atr_strategy(symbol, df)
+            elif strategy_name == "RENKO":
+                signal = self.run_renko_strategy(symbol, df)
             
             if signal:
                 signals.append(signal)

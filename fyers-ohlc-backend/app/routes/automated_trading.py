@@ -48,7 +48,7 @@ class AutoTradingRequest(BaseModel):
     position_size_percent: float = Field(20.0, description="Position size as % of capital (default: 20%)", ge=5, le=50)
     strategies: Optional[List[str]] = Field(
         None, 
-        description="List of strategies to run (default: all). Options: RSI, MACD, SUPERTREND, BOLLINGER, ADX"
+        description="List of strategies to run (default: all). Options: RSI, MACD, SUPERTREND, BOLLINGER, ADX, ATR, RENKO"
     )
     mode: str = Field("HISTORICAL", description="Trading mode: HISTORICAL or LIVE")
     timeframe: str = Field("5", description="Timeframe (1, 5, 15, 60, D)")
@@ -107,7 +107,7 @@ async def start_automated_trading(
             end_date = date.today()
         
         # Validate strategies
-        valid_strategies = ["RSI", "MACD", "SUPERTREND", "BOLLINGER", "ADX"]
+        valid_strategies = ["RSI", "MACD", "SUPERTREND", "BOLLINGER", "ADX", "ATR", "RENKO"]
         if request.strategies:
             invalid = [s for s in request.strategies if s.upper() not in valid_strategies]
             if invalid:
