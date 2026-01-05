@@ -20,12 +20,15 @@ export default function MarketStatus() {
         throw new Error("Failed to fetch market status");
       }
       const data = await response.json();
+      console.log("Market status from API:", data);
       setMarketData(data);
     } catch (error) {
       console.error("Failed to check market status:", error);
       // Fallback to time-based logic if API fails
+      const fallbackStatus = checkTimeBasedStatus();
+      console.log("Using fallback status:", fallbackStatus);
       setMarketData({
-        is_open: checkTimeBasedStatus(),
+        is_open: fallbackStatus,
         reason: "Unable to fetch from server"
       });
     } finally {
