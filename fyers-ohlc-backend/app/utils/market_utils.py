@@ -1,8 +1,11 @@
 """
 Utility functions for market status, trading days, and holidays
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Tuple
+
+# IST timezone (UTC+5:30)
+IST = timezone(timedelta(hours=5, minutes=30))
 
 
 # Indian Stock Market holidays for 2026 (NSE)
@@ -47,13 +50,20 @@ def is_market_open(date: datetime = None) -> Tuple[bool, str]:
     Check if the market is open on a given date and time.
     
     Args:
-        date: datetime object (defaults to today)
+        date: datetime object (defaults to current time in IST)
     
     Returns:
         Tuple of (is_open: bool, reason: str)
     """
     if date is None:
-        date = datetime.now()
+        # Get current time in IST
+        date = datetime.now(IST)
+    elif date.tzinfo is None:
+        # If naive datetime provided, assume it's IST
+        date = date.replace(tzinfo=IST)
+    else:
+        # Convert to IST if it's in a different timezone
+        date = date.astimezone(IST)
     
     # Check if weekend
     if is_weekend(date):
@@ -113,7 +123,8 @@ def get_market_status() -> dict:
     Returns:
         Dictionary with market status details
     """
-    now = datetime.now()
+    # Get current time in IST
+    now = datetime.now(IST)
     is_open, reason = is_market_open(now)
     last_trading_day = get_last_trading_day(now)
     
