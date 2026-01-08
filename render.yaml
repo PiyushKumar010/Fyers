@@ -1,6 +1,6 @@
 # render.yaml
-# This file is optional but makes Render deployment easier
-# Place this in your repository root
+# Render deployment configuration for Fyers OHLC Backend
+# Updated: 2026-01-08 - Added proper auto-deploy configuration
 
 services:
   - type: web
@@ -10,13 +10,19 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     plan: free
+    
+    # Auto-deploy settings
+    autoDeploy: true  # Enable automatic deployments
+    branch: main      # Deploy from main branch
+    
+    # Environment variables
     envVars:
       - key: FYERS_CLIENT_ID
         sync: false  # Set manually in Render dashboard
       - key: FYERS_SECRET_KEY
         sync: false  # Set manually in Render dashboard
       - key: FYERS_REDIRECT_URI
-        value: https://fyers-backend.onrender.com/auth/callback
+        value: https://fyers-backend-7kee.onrender.com/auth/callback
       - key: MONGO_URI
         sync: false  # Set manually in Render dashboard
       - key: DB_NAME
@@ -33,4 +39,8 @@ services:
         value: true
       - key: LIVE_DATA_THRESHOLD_DAYS
         value: 1
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+    
+    # Health check
     healthCheckPath: /health
