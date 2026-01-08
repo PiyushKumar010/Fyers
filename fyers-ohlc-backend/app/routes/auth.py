@@ -251,3 +251,39 @@ def refresh_tokens():
         return {"message": "Tokens refreshed", "detail": new_tokens}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Refresh failed: {e}")
+
+
+@router.post("/logout")
+@router.get("/logout")
+def logout():
+    """
+    Logout the user by clearing all stored tokens from the database.
+    This forces the user to re-authenticate on next API call.
+    """
+    try:
+        tokens_collection = database.tokens_collection
+        if tokens_collection is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Database not available"
+            )
+        
+        # Delete all tokens from the collection
+        result = tokens_collection.delete_many({})
+        deleted_count = result.deleted_count
+        
+        print(f"[AUTH LOGOUT] Deleted {deleted_count} token(s) from database")
+        
+        return {
+            "status": "success",
+            "message": "Logged out successfully",
+            "tokens_cleared": deleted_count
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[AUTH LOGOUT] Error during logout: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Logout failed: {str(e)}"
+        )

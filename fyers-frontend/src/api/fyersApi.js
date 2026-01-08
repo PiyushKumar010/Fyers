@@ -58,6 +58,19 @@ export async function getAuthStatus() {
   }
 }
 
+export async function logout() {
+  try {
+    const response = await fetch(`${BASE_URL}/auth/logout`, {
+      method: "POST",
+    });
+    if (!response.ok) throw new Error("Failed to logout");
+    return await response.json();
+  } catch (error) {
+    console.error("Logout error:", error);
+    throw error;
+  }
+}
+
 export async function checkHealth() {
   try {
     const response = await fetch(`${BASE_URL}/health`);

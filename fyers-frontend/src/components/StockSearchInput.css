@@ -1,0 +1,149 @@
+.stock-search-input {
+  position: relative;
+  width: 100%;
+}
+
+.stock-search-field {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.stock-search-field:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.stock-search-field:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.stock-search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stock-search-item {
+  padding: 12px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.stock-search-item:last-child {
+  border-bottom: none;
+}
+
+.stock-search-item:hover,
+.stock-search-item.selected {
+  background-color: #f5f9f5;
+}
+
+.stock-symbol {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.stock-name {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stock-search-no-results {
+  padding: 16px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+/* Scrollbar styling */
+.stock-search-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.stock-search-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.stock-search-dropdown::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.stock-search-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .stock-search-field {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #fff;
+  }
+
+  .stock-search-field:focus {
+    border-color: #66bb6a;
+    box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.2);
+  }
+
+  .stock-search-dropdown {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+
+  .stock-search-item {
+    border-bottom-color: #333;
+  }
+
+  .stock-search-item:hover,
+  .stock-search-item.selected {
+    background-color: #333;
+  }
+
+  .stock-symbol {
+    color: #fff;
+  }
+
+  .stock-name {
+    color: #aaa;
+  }
+
+  .stock-search-no-results {
+    color: #666;
+  }
+}

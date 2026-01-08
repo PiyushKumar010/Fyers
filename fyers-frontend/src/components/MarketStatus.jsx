@@ -34,10 +34,15 @@ export default function MarketStatus() {
   };
 
   const checkTimeBasedStatus = () => {
+    // Get current time in IST (UTC+5:30)
     const now = new Date();
-    const day = now.getDay(); // 0 = Sunday, 6 = Saturday
-    const hour = now.getHours();
-    const minute = now.getMinutes();
+    const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+    const istTime = new Date(utcTime + istOffset);
+    
+    const day = istTime.getDay(); // 0 = Sunday, 6 = Saturday
+    const hour = istTime.getHours();
+    const minute = istTime.getMinutes();
 
     // Market is closed on weekends
     if (day === 0 || day === 6) {
@@ -45,15 +50,11 @@ export default function MarketStatus() {
     }
 
     // NSE market hours: 9:15 AM to 3:30 PM IST
-    // Convert to UTC if needed (IST is UTC+5:30)
-    const istHour = hour;
-    const istMinute = minute;
-
     // Market opens at 9:15 and closes at 15:30
-    if (istHour < 9 || (istHour === 9 && istMinute < 15)) {
+    if (hour < 9 || (hour === 9 && minute < 15)) {
       return false; // Before market open
     }
-    if (istHour > 15 || (istHour === 15 && istMinute > 30)) {
+    if (hour > 15 || (hour === 15 && minute > 30)) {
       return false; // After market close
     }
 

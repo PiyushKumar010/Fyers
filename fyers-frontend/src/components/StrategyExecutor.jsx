@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { MdTrendingUp, MdAttachMoney, MdShowChart, MdAccessTime, MdPlayArrow, MdError, MdTimeline, MdSpeed, MdTrendingDown, MdHistory, MdClose, MdDelete } from "react-icons/md";
-import { ALL_SYMBOLS, normalizeSymbol } from "../constants/stocks";
+import { normalizeSymbol } from "../constants/stocks";
+import StockSearchInput from "./StockSearchInput";
 import "./StrategyExecutor.css";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
@@ -18,7 +19,6 @@ export default function StrategyExecutor() {
   const [selectedStrategy, setSelectedStrategy] = useState("");
   const [strategyParams, setStrategyParams] = useState({});
   const [symbol, setSymbol] = useState("NSE:RELIANCE-EQ");
-  const [customSymbol, setCustomSymbol] = useState("");
   const [timeframe, setTimeframe] = useState("5");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -83,9 +83,7 @@ export default function StrategyExecutor() {
   };
 
   const executeStrategy = async () => {
-    const activeSymbol = customSymbol ? normalizeSymbol(customSymbol) : symbol;
-    
-    if (!selectedStrategy || !activeSymbol) {
+    if (!selectedStrategy || !symbol) {
       setError("Please select a strategy and enter a symbol");
       return;
     }
@@ -110,7 +108,7 @@ export default function StrategyExecutor() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           strategy: selectedStrategy,
-          symbol: activeSymbol,  // Send full symbol format
+          symbol: symbol,  // Send full symbol format
           timeframe: timeframe,
           start_date: startDate,
           end_date: endDate,
@@ -131,7 +129,7 @@ export default function StrategyExecutor() {
         id: Date.now(),
         timestamp: new Date().toISOString(),
         strategy: selectedStrategy,
-        symbol: activeSymbol,
+        symbol: symbol,
         timeframe: timeframe,
         startDate: startDate,
         endDate: endDate,
@@ -373,36 +371,11 @@ export default function StrategyExecutor() {
 
         <div className="control-group">
           <label>Symbol</label>
-          <div className="symbol-input-group">
-            <select
-              value={symbol}
-              onChange={(e) => {
-                setSymbol(e.target.value);
-                setCustomSymbol("");
-              }}
-              className="select-input"
-              disabled={!!customSymbol}
-            >
-              <option value="">Select or enter custom...</option>
-              {ALL_SYMBOLS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-            <span className="or-divider">OR</span>
-            <input
-              type="text"
-              value={customSymbol}
-              onChange={(e) => {
-                setCustomSymbol(e.target.value);
-                setSymbol("");
-              }}
-              placeholder="Enter symbol (e.g., RELIANCE)"
-              className="text-input"
-              disabled={!!symbol}
-            />
-          </div>
+          <StockSearchInput
+            value={symbol}
+            onChange={setSymbol}
+            placeholder="Search by symbol or company name..."
+          />
         </div>
 
         <div className="control-group">
@@ -474,7 +447,7 @@ export default function StrategyExecutor() {
 
       <button
         onClick={executeStrategy}
-        disabled={loading || !selectedStrategy || (!symbol && !customSymbol) || !startDate || !endDate}
+        disabled={loading || !selectedStrategy || !symbol || !startDate || !endDate}
         className="execute-button"
       >
         {loading ? (

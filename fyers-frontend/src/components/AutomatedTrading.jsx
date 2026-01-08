@@ -1,21 +1,10 @@
 import { useState, useEffect } from "react";
 import { MdTrendingUp, MdRefresh } from "react-icons/md";
+import StockSearchInput from "./StockSearchInput";
+import { ALL_SYMBOLS } from "../constants/stocks";
 import "./AutomatedTrading.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
-
-const POPULAR_SYMBOLS = [
-  { value: "NSE:RELIANCE-EQ", label: "RELIANCE" },
-  { value: "NSE:TCS-EQ", label: "TCS" },
-  { value: "NSE:SBIN-EQ", label: "SBIN" },
-  { value: "NSE:INFY-EQ", label: "INFY" },
-  { value: "NSE:HDFCBANK-EQ", label: "HDFC Bank" },
-  { value: "NSE:ICICIBANK-EQ", label: "ICICI Bank" },
-  { value: "NSE:TATAMOTORS-EQ", label: "Tata Motors" },
-  { value: "NSE:ITC-EQ", label: "ITC" },
-  { value: "NSE:WIPRO-EQ", label: "WIPRO" },
-  { value: "NSE:AXISBANK-EQ", label: "Axis Bank" },
-];
 
 const ALL_STRATEGIES = [
   { value: "RSI", label: "RSI (Relative Strength Index)", description: "Overbought/oversold signals" },
@@ -469,30 +458,16 @@ export default function AutomatedTrading() {
             {/* Stock Symbol Selection */}
             <div className="form-group">
               <label>Select Stock</label>
-              <div className="symbol-input-group">
-                <select
-                  value={selectedSymbol}
-                  onChange={handleSymbolDropdownChange}
-                  className="symbol-select"
-                  disabled={!!customSymbol}
-                >
-                  <option value="">Select from list...</option>
-                  {POPULAR_SYMBOLS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="or-divider">OR</span>
-                <input
-                  type="text"
-                  value={customSymbol}
-                  onChange={handleCustomSymbolChange}
-                  placeholder="Enter custom symbol (e.g., RELIANCE)"
-                  className="symbol-input"
-                  disabled={!!selectedSymbol}
-                />
-              </div>
+              <StockSearchInput
+                value={config.symbols[0] || ''}
+                onChange={(newSymbol) => {
+                  setSelectedSymbol(newSymbol);
+                  setCustomSymbol("");
+                  setConfig({ ...config, symbols: [newSymbol] });
+                }}
+                placeholder="Search by symbol or company name..."
+                required
+              />
               <p className="helper-text">Currently selected: {config.symbols[0] || 'None'}</p>
             </div>
 

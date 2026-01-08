@@ -9,6 +9,7 @@
   --border-primary: #e1e4e8;
   --border-secondary: #eaecef;
   --border-accent: #0366d6;
+  --border-color: #e1e4e8;
   
   --text-primary: #24292e;
   --text-secondary: #586069;
@@ -17,6 +18,10 @@
   --accent-primary: #0366d6;
   --accent-secondary: #0056b3;
   --accent-gradient: linear-gradient(135deg, #0366d6 0%, #0056b3 100%);
+  
+  --primary-color: #0366d6;
+  --danger-color: #dc3545;
+  --card-bg: #ffffff;
   
   --success: #28a745;
   --success-bg: #d4edda;

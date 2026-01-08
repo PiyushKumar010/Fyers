@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { getOhlc } from "../api/fyersApi";
 import { ALL_SYMBOLS } from "../constants/stocks";
 import CandlestickChart from "./CandlestickChart";
+import StockSearchInput from "./StockSearchInput";
 import "./HistoricalData.css";
 
 const RESOLUTIONS = [
@@ -124,31 +125,16 @@ export default function HistoricalData() {
 
       <form onSubmit={handleSubmit} className="historical-controls">
         <div className="control-group">
-          <label>Symbol</label>
-          <div className="symbol-input-group">
-            <select
-              value={symbol}
-              onChange={handleSymbolChange}
-              className="select-input"
-              disabled={!!customSymbol}
-            >
-              <option value="">Select or enter custom...</option>
-              {ALL_SYMBOLS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-            <span className="or-divider">OR</span>
-            <input
-              type="text"
-              value={customSymbol}
-              onChange={handleCustomSymbolChange}
-              placeholder="Enter symbol (e.g., RELIANCE)"
-              className="text-input"
-              disabled={!!symbol}
-            />
-          </div>
+          <label>Search Stock</label>
+          <StockSearchInput
+            value={symbol}
+            onChange={(newSymbol) => {
+              setSymbol(newSymbol);
+              setCustomSymbol("");
+            }}
+            placeholder="Search by symbol or company name..."
+            required
+          />
         </div>
 
         <div className="control-group">

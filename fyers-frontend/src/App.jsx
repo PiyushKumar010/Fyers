@@ -9,6 +9,7 @@ import TradingHistory from "./components/TradingHistory";
 import StrategiesPage from "./components/StrategiesPage";
 import HistoricalData from "./components/HistoricalData";
 import IndicatorsDashboard from "./components/IndicatorsDashboard";
+import Settings from "./components/Settings";
 import "./App.css";
 
 function AuthCallbackHandler() {
@@ -71,6 +72,7 @@ function App() {
             <Route path="/strategies" element={<StrategiesPage />} />
             <Route path="/historical" element={<HistoricalData />} />
             <Route path="/indicators" element={<IndicatorsDashboard />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </main>
       </div>

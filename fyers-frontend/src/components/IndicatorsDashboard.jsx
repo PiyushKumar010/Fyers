@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { MdInsights } from 'react-icons/md';
-import { ALL_SYMBOLS, normalizeSymbol } from '../constants/stocks';
+import { normalizeSymbol } from '../constants/stocks';
+import StockSearchInput from './StockSearchInput';
 import './IndicatorsDashboard.css';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 const IndicatorsDashboard = () => {
   const [symbol, setSymbol] = useState('NSE:SBIN-EQ');
-  const [customSymbol, setCustomSymbol] = useState('');
   const [interval, setInterval] = useState('5');
   const [duration, setDuration] = useState(30);
   const [selectedIndicators, setSelectedIndicators] = useState(['rsi', 'macd', 'supertrend']);
@@ -30,9 +30,7 @@ const IndicatorsDashboard = () => {
   };
 
   const calculateIndicators = async () => {
-    const activeSymbol = customSymbol ? normalizeSymbol(customSymbol) : symbol;
-    
-    if (!activeSymbol) {
+    if (!symbol) {
       alert('Please select or enter a symbol');
       return;
     }
@@ -45,7 +43,7 @@ const IndicatorsDashboard = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          symbol: activeSymbol,
+          symbol: symbol,
           interval,
           duration,
           indicators: selectedIndicators.length > 0 ? selectedIndicators : ['all'],
@@ -148,34 +146,11 @@ const IndicatorsDashboard = () => {
           <div className="symbol-config">
             <div className="form-group-inline">
               <label>Symbol</label>
-              <div className="symbol-input-group">
-                <select
-                  value={symbol}
-                  onChange={(e) => {
-                    setSymbol(e.target.value);
-                    setCustomSymbol("");
-                  }}
-                  disabled={!!customSymbol}
-                >
-                  <option value="">Select or enter custom...</option>
-                  {ALL_SYMBOLS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="or-text">OR</span>
-                <input
-                  type="text"
-                  value={customSymbol}
-                  onChange={(e) => {
-                    setCustomSymbol(e.target.value);
-                    setSymbol("");
-                  }}
-                  placeholder="e.g., RELIANCE"
-                  disabled={!!symbol}
-                />
-              </div>
+              <StockSearchInput
+                value={symbol}
+                onChange={setSymbol}
+                placeholder="Search by symbol or company name..."
+              />
             </div>
 
             <div className="form-group-inline">

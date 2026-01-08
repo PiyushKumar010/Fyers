@@ -8,7 +8,8 @@ import {
   MdShowChart,
   MdInsights,
   MdMenu,
-  MdChevronLeft
+  MdChevronLeft,
+  MdSettings
 } from "react-icons/md";
 import "./Sidebar.css";
 
@@ -19,6 +20,7 @@ const menuItems = [
   { path: "/strategies", icon: MdLightbulb, label: "Strategies" },
   { path: "/historical", icon: MdShowChart, label: "Historical Data" },
   { path: "/indicators", icon: MdInsights, label: "Indicators" },
+  { path: "/settings", icon: MdSettings, label: "Settings" },
 ];
 
 export default function Sidebar() {
