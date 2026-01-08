@@ -15,7 +15,10 @@ def market_status():
     Get current market status (open/closed, reason, last trading day).
     Useful for determining if the market is open or closed.
     """
-    return get_market_status()
+    status = get_market_status()
+    # Log for debugging timezone issues in production
+    print(f"[MARKET STATUS] UTC: {status.get('utc_time')}, IST: {status.get('current_time')}, Is Open: {status.get('is_open')}, Reason: {status.get('reason')}")
+    return status
 
 
 @router.get("/ltp")

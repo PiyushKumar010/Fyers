@@ -56,8 +56,10 @@ def is_market_open(date: datetime = None) -> Tuple[bool, str]:
         Tuple of (is_open: bool, reason: str)
     """
     if date is None:
-        # Get current time in IST
-        date = datetime.now(IST)
+        # Get current time in IST - use UTC first then convert to IST
+        # This ensures consistent behavior across different server timezones
+        utc_now = datetime.now(timezone.utc)
+        date = utc_now.astimezone(IST)
     elif date.tzinfo is None:
         # If naive datetime provided, assume it's IST
         date = date.replace(tzinfo=IST)
@@ -128,8 +130,10 @@ def get_market_status() -> dict:
     Returns:
         Dictionary with market status details
     """
-    # Get current time in IST
-    now = datetime.now(IST)
+    # Get current time in IST - always use UTC first then convert
+    # This ensures consistent behavior across different deployment environments
+    utc_now = datetime.now(timezone.utc)
+    now = utc_now.astimezone(IST)
     is_open, reason = is_market_open(now)
     last_trading_day = get_last_trading_day(now)
     
@@ -141,7 +145,9 @@ def get_market_status() -> dict:
         "current_time": now.strftime("%H:%M:%S"),
         "current_day": now.strftime("%A"),
         "last_trading_day": last_trading_day.strftime("%Y-%m-%d"),
-        "next_check": "Market status updated"
+        "next_check": "Market status updated",
+        "timezone": "IST (UTC+5:30)",
+        "utc_time": utc_now.strftime("%H:%M:%S")
     }
 
 
