@@ -6,6 +6,7 @@ import { getOhlc } from "../api/fyersApi";
 import { ALL_SYMBOLS } from "../constants/stocks";
 import CandlestickChart from "./CandlestickChart";
 import StockSearchInput from "./StockSearchInput";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import "./HistoricalData.css";
 
 const RESOLUTIONS = [
@@ -224,6 +225,183 @@ export default function HistoricalData() {
           <div className="chart-container-fullwidth">
             <h2>Historical Candlestick Chart</h2>
             <CandlestickChart data={data} />
+          </div>
+
+          {/* Analytics Section */}
+          <div className="chart-container-fullwidth" style={{ marginTop: '30px' }}>
+            <h2>📊 Data Analytics</h2>
+            
+            {/* Summary Statistics */}
+            <div style={{ 
+              background: 'var(--bg-secondary)', 
+              padding: '20px', 
+              borderRadius: '8px',
+              marginBottom: '20px',
+              border: '1px solid var(--border-color)'
+            }}>
+              <h3 style={{ marginBottom: '15px', fontSize: '1.1rem' }}>Summary Statistics</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Highest Price</div>
+                  <div style={{ fontSize: '1.3rem', fontWeight: '600', color: '#22c55e' }}>
+                    ₹{Math.max(...data.map(d => d.high)).toFixed(2)}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Lowest Price</div>
+                  <div style={{ fontSize: '1.3rem', fontWeight: '600', color: '#ef4444' }}>
+                    ₹{Math.min(...data.map(d => d.low)).toFixed(2)}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Average Close</div>
+                  <div style={{ fontSize: '1.3rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    ₹{(data.reduce((sum, d) => sum + d.close, 0) / data.length).toFixed(2)}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Total Volume</div>
+                  <div style={{ fontSize: '1.3rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    {data.reduce((sum, d) => sum + (d.volume || 0), 0).toLocaleString()}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Price Range</div>
+                  <div style={{ fontSize: '1.3rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    ₹{(Math.max(...data.map(d => d.high)) - Math.min(...data.map(d => d.low))).toFixed(2)}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Avg. Daily Range</div>
+                  <div style={{ fontSize: '1.3rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+                    ₹{(data.reduce((sum, d) => sum + (d.high - d.low), 0) / data.length).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Charts Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px' }}>
+              {/* Price Trend Line Chart */}
+              <div style={{ 
+                background: 'var(--bg-secondary)', 
+                padding: '20px', 
+                borderRadius: '8px',
+                border: '1px solid var(--border-color)'
+              }}>
+                <h4 style={{ marginBottom: '15px', fontSize: '1rem' }}>Close Price Trend</h4>
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={data.slice(-50)}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis 
+                      dataKey="time" 
+                      stroke="#666"
+                      tick={{ fontSize: 10 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                    />
+                    <YAxis stroke="#666" domain={['auto', 'auto']} />
+                    <Tooltip 
+                      formatter={(value) => `₹${value.toFixed(2)}`}
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px' }}
+                    />
+                    <Line type="monotone" dataKey="close" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Volume Bar Chart */}
+              <div style={{ 
+                background: 'var(--bg-secondary)', 
+                padding: '20px', 
+                borderRadius: '8px',
+                border: '1px solid var(--border-color)'
+              }}>
+                <h4 style={{ marginBottom: '15px', fontSize: '1rem' }}>Trading Volume</h4>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={data.slice(-50)}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis 
+                      dataKey="time" 
+                      stroke="#666"
+                      tick={{ fontSize: 10 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                    />
+                    <YAxis stroke="#666" />
+                    <Tooltip 
+                      formatter={(value) => value.toLocaleString()}
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px' }}
+                    />
+                    <Bar dataKey="volume" fill="#8b5cf6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* OHLC Comparison */}
+              <div style={{ 
+                background: 'var(--bg-secondary)', 
+                padding: '20px', 
+                borderRadius: '8px',
+                border: '1px solid var(--border-color)'
+              }}>
+                <h4 style={{ marginBottom: '15px', fontSize: '1rem' }}>OHLC Comparison (Latest 10)</h4>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={data.slice(-10)}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis 
+                      dataKey="time" 
+                      stroke="#666"
+                      tick={{ fontSize: 10 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                    />
+                    <YAxis stroke="#666" />
+                    <Tooltip 
+                      formatter={(value) => `₹${value.toFixed(2)}`}
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px' }}
+                    />
+                    <Legend />
+                    <Bar dataKey="open" fill="#94a3b8" name="Open" />
+                    <Bar dataKey="high" fill="#22c55e" name="High" />
+                    <Bar dataKey="low" fill="#ef4444" name="Low" />
+                    <Bar dataKey="close" fill="#3b82f6" name="Close" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Volatility (High-Low Range) */}
+              <div style={{ 
+                background: 'var(--bg-secondary)', 
+                padding: '20px', 
+                borderRadius: '8px',
+                border: '1px solid var(--border-color)'
+              }}>
+                <h4 style={{ marginBottom: '15px', fontSize: '1rem' }}>Daily Price Range (Volatility)</h4>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={data.slice(-50).map(d => ({ ...d, range: d.high - d.low }))}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis 
+                      dataKey="time" 
+                      stroke="#666"
+                      tick={{ fontSize: 10 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                    />
+                    <YAxis stroke="#666" />
+                    <Tooltip 
+                      formatter={(value) => `₹${value.toFixed(2)}`}
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px' }}
+                    />
+                    <Bar dataKey="range" fill="#f59e0b" name="Price Range" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
           <div className="table-container-fullwidth">

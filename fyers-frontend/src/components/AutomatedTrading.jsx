@@ -2,6 +2,13 @@ import { useState, useEffect } from "react";
 import { MdTrendingUp, MdRefresh } from "react-icons/md";
 import StockSearchInput from "./StockSearchInput";
 import { ALL_SYMBOLS } from "../constants/stocks";
+import { 
+  WinLossDistributionChart, 
+  StrategySignalsChart, 
+  PortfolioPerformanceChart,
+  ProfitLossBreakdownChart,
+  TradePerformanceChart
+} from "./TradingCharts";
 import "./AutomatedTrading.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
@@ -931,6 +938,82 @@ export default function AutomatedTrading() {
                     </span>
                   </div>
                 </div>
+              </div>
+
+              {/* Visual Analytics Section */}
+              <div className="results-section">
+                <h3>📈 Visual Analytics</h3>
+                
+                {/* Charts Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', marginTop: '20px' }}>
+                  {/* Win/Loss Distribution */}
+                  <div style={{ 
+                    background: 'var(--bg-secondary)', 
+                    padding: '20px', 
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)'
+                  }}>
+                    <h4 style={{ marginBottom: '15px', fontSize: '1rem', color: 'var(--text-primary)' }}>
+                      Win/Loss Distribution
+                    </h4>
+                    <WinLossDistributionChart performance={results.performance} />
+                  </div>
+
+                  {/* Portfolio Performance */}
+                  <div style={{ 
+                    background: 'var(--bg-secondary)', 
+                    padding: '20px', 
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)'
+                  }}>
+                    <h4 style={{ marginBottom: '15px', fontSize: '1rem', color: 'var(--text-primary)' }}>
+                      Portfolio Performance
+                    </h4>
+                    <PortfolioPerformanceChart portfolio={results.portfolio} />
+                  </div>
+
+                  {/* Profit/Loss Breakdown */}
+                  <div style={{ 
+                    background: 'var(--bg-secondary)', 
+                    padding: '20px', 
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)'
+                  }}>
+                    <h4 style={{ marginBottom: '15px', fontSize: '1rem', color: 'var(--text-primary)' }}>
+                      P&L Breakdown
+                    </h4>
+                    <ProfitLossBreakdownChart portfolio={results.portfolio} />
+                  </div>
+
+                  {/* Average Trade Performance */}
+                  <div style={{ 
+                    background: 'var(--bg-secondary)', 
+                    padding: '20px', 
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)'
+                  }}>
+                    <h4 style={{ marginBottom: '15px', fontSize: '1rem', color: 'var(--text-primary)' }}>
+                      Average Trade Performance
+                    </h4>
+                    <TradePerformanceChart performance={results.performance} />
+                  </div>
+                </div>
+
+                {/* Strategy Signals Chart - Full Width */}
+                {results.signals && results.signals.signal_breakdown && (
+                  <div style={{ 
+                    background: 'var(--bg-secondary)', 
+                    padding: '20px', 
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    marginTop: '20px'
+                  }}>
+                    <h4 style={{ marginBottom: '15px', fontSize: '1rem', color: 'var(--text-primary)' }}>
+                      Strategy Signals Comparison
+                    </h4>
+                    <StrategySignalsChart signals={results.signals} />
+                  </div>
+                )}
               </div>
 
               {/* Strategy Breakdown */}

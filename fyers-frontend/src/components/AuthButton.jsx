@@ -6,9 +6,10 @@ import "./AuthButton.css";
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 export default function AuthButton() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // null = checking, true/false = status
   const [isChecking, setIsChecking] = useState(true);
   const [healthStatus, setHealthStatus] = useState(null);
+  const [hasShownPopup, setHasShownPopup] = useState(false);
 
   useEffect(() => {
     checkBackendHealth();
@@ -29,8 +30,10 @@ export default function AuthButton() {
       sessionStorage.removeItem('fyers_login_timestamp');
     }
     
-    // Check auth status every 30 seconds
-    const interval = setInterval(checkAuthStatus, 30000);
+    // Check auth status every 30 seconds (but don't show popup repeatedly)
+    const interval = setInterval(() => {
+      checkAuthStatus(true); // Pass true to indicate it's a background check
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -40,13 +43,24 @@ export default function AuthButton() {
     setIsChecking(false);
   };
 
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = async (isBackgroundCheck = false) => {
     try {
       const response = await fetch(`${API_BASE}/auth/status`);
       const data = await response.json();
-      setIsAuthenticated(data.authenticated || false);
+      const authenticated = data.authenticated || false;
+      
+      // Only update state if it actually changed or if it's the first check
+      if (isAuthenticated !== authenticated) {
+        setIsAuthenticated(authenticated);
+      }
+      
+      // Mark that we've shown the popup on first load if not authenticated
+      if (!isBackgroundCheck && !authenticated && !hasShownPopup) {
+        setHasShownPopup(true);
+      }
     } catch (error) {
       console.error("Failed to check auth status:", error);
+      // Don't change auth state on network errors
     }
   };
 
@@ -79,7 +93,8 @@ export default function AuthButton() {
     }
   };
 
-  if (isChecking) {
+  // Don't show anything while checking
+  if (isChecking || isAuthenticated === null) {
     return null;
   }
 
@@ -100,8 +115,8 @@ export default function AuthButton() {
     );
   }
 
-  // Only show the popup if user is NOT authenticated
-  if (isAuthenticated) {
+  // Only show the popup if user is NOT authenticated AND we haven't shown it yet this session
+  if (isAuthenticated || !hasShownPopup) {
     return null;
   }
 
